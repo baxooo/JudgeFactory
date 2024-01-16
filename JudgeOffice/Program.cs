@@ -1,7 +1,7 @@
-﻿
-using JudgeOffice.Models;
+﻿using JudgeOffice.Models;
 using JudgeOffice.Models.FoodModels;
 using JudgeOffice.Models.OrderModels;
+using JudgeOffice.Models.TranslationModels;
 using JudgeOffice.Offices;
 using JudgeOffice.Providers;
 using System.Reflection;
@@ -13,29 +13,28 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        
-
         while (ValidInput());
-
     }
 
     private static bool ValidInput()
     {
         Console.Clear();
         Console.WriteLine("1 - Delivery\n2 - Translation");
-        var key = Console.ReadKey().KeyChar;
 
+        var key = Console.ReadKey().KeyChar;
         switch (key)
         {
             case '1'://Delivery
-                DeliveryOffice office = new DeliveryOffice();
-                OfficeManager<Food> manager = new OfficeManager<Food>(office);
+                DeliveryOffice foodOffice = new DeliveryOffice();
+                OfficeManager<Food> foodManager = new OfficeManager<Food>(foodOffice);
                 Console.Clear();
-                GetProviders(manager);
+                GetProviders(foodManager);
                 return true;
-            case '2'://Translation'
-                //TranslationOffice office = new TranslationOffice();
-                //OfficeManager<Translation> manager = new OfficeManager<Translation>(office);
+            case '2'://Translation
+                TranslationOffice translationOffice = new TranslationOffice();
+                OfficeManager<Translation> TranslationManager = new OfficeManager<Translation>(translationOffice);
+                Console.Clear();
+                GetProviders(TranslationManager);
                 return true;
             default:
                 Console.WriteLine("please, select 1 or 2");
@@ -129,6 +128,7 @@ internal class Program
     private static async Task<bool> ConfirmOrder<T>(OfficeManager<T> manager, OrderRequest<T> order, Provider<T> provider)
         where T : ServiceType
     {
+        Console.SetCursorPosition(0, Console.CursorTop);
         Console.WriteLine("confirmed");
         await manager.Office.SendOrder(order, provider);
         return true;

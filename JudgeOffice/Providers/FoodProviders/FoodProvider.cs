@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JudgeOffice.Providers;
+namespace JudgeOffice.Providers.FoodProviders;
 
 internal abstract class FoodProvider : Provider<Food>
 {
@@ -53,12 +53,12 @@ internal abstract class FoodProvider : Provider<Food>
     private static async Task PrepareFoodAsync(Food food, int spot)
     {
         Console.WriteLine($"Preparing {food.Name} at spot {spot}...");
-        await Task.Delay(TimeSpan.FromSeconds(food.TimeToPrepareInSeconds)); 
+        await Task.Delay(TimeSpan.FromSeconds(food.TimeToPrepareInSeconds));
         Console.WriteLine($"Finished preparing {food.Name} at spot {spot}.");
         _spotOccupancy[spot].SetResult(true);
     }
 
-    private static async Task<int>  GetNextAvailableSpot()
+    private static async Task<int> GetNextAvailableSpot()
     {
         int spot = 0;
 

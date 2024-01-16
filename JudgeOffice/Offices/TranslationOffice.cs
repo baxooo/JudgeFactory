@@ -1,4 +1,6 @@
 ﻿using JudgeOffice.Models.OrderModels;
+using JudgeOffice.Models.TranslationModels;
+using JudgeOffice.Providers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +9,16 @@ using System.Threading.Tasks;
 
 namespace JudgeOffice.Offices
 {
-    internal class TranslationOffice // : Office
+    internal class TranslationOffice : Office<Translation>
     {
-        //public void SendOrder(OrderRequest<Translation> order)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public override Provider<Translation> GetServices()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override async Task<Order<Translation>> SendOrder(OrderRequest<Translation> order, Provider<Translation> provider)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

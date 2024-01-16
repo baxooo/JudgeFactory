@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JudgeOffice.Providers
+namespace JudgeOffice.Providers.FoodProviders
 {
     internal class BrunchProvider : FoodProvider
     {
@@ -14,10 +14,10 @@ namespace JudgeOffice.Providers
         public override TimeSpan CloseTime => new(14, 00, 00);
         public BrunchProvider()
         {
-            ListOfAvailableGoods = new List<Food>() 
-            {   
-                new Burger(), 
-                new Chips(), 
+            ListOfAvailableGoods = new List<Food>()
+            {
+                new Burger(),
+                new Chips(),
                 new Nuggets() ,
                 new Coffee(),
                 new Cappuccino(),

@@ -1,4 +1,4 @@
-﻿namespace JudgeOffice.Models.FoodModels
+﻿namespace JudgeOffice.Models
 {
     internal abstract class ServiceType
     {

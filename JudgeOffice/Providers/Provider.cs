@@ -1,4 +1,4 @@
-﻿using JudgeOffice.Models.FoodModels;
+﻿using JudgeOffice.Models;
 
 namespace JudgeOffice.Providers
 {

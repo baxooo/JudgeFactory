@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JudgeOffice.Providers
+namespace JudgeOffice.Providers.FoodProviders
 {
     internal class BreakfastProvider : FoodProvider
     {
