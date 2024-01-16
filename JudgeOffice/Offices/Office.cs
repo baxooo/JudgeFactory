@@ -13,6 +13,6 @@ namespace JudgeOffice.Offices
         where T : ServiceType
     {
         public abstract Provider<T> GetServices();
-        public abstract Order<T> SendOrder(OrderRequest<T> order, Provider<T> provider);
+        public abstract Task<Order<T>> SendOrder(OrderRequest<T> order, Provider<T> provider);
     }
 }

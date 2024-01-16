@@ -17,9 +17,10 @@ internal abstract class FoodProvider : Provider<Food>
 
     private static Dictionary<int, TaskCompletionSource<bool>> _spotOccupancy = new Dictionary<int, TaskCompletionSource<bool>>();
 
-    public async void AddOrder(OrderRequest<Food> order)
+    public async Task<FoodOrderResponse> AddOrder(OrderRequest<Food> order)
     {
         OrdersQueue.Enqueue(order);
+        return await ProcessNextOrder();
     }
     private async Task<FoodOrderResponse> ProcessOrderAsync(OrderRequest<Food> order)
     {
@@ -51,9 +52,9 @@ internal abstract class FoodProvider : Provider<Food>
 
     private static async Task PrepareFoodAsync(Food food, int spot)
     {
-        Console.WriteLine($"Cooking {food.Name} at spot {spot}...");
+        Console.WriteLine($"Preparing {food.Name} at spot {spot}...");
         await Task.Delay(TimeSpan.FromSeconds(food.TimeToPrepareInSeconds)); 
-        Console.WriteLine($"Finished cooking {food.Name} at spot {spot}.");
+        Console.WriteLine($"Finished preparing {food.Name} at spot {spot}.");
         _spotOccupancy[spot].SetResult(true);
     }
 
@@ -78,12 +79,13 @@ internal abstract class FoodProvider : Provider<Food>
         return spot;
     }
 
-    private async void ProcessNextOrder()
+    private async Task<FoodOrderResponse> ProcessNextOrder()
     {
         if (OrdersQueue.Count > 0)
         {
             var nextOrder = OrdersQueue.Dequeue();
-            await ProcessOrderAsync(nextOrder); 
+            return await ProcessOrderAsync(nextOrder);
         }
+        else return null;
     }
 }

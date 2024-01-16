@@ -13,14 +13,16 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("1 - Delivery\n2 - Translation");
+        
 
-        while (!ValidInput());
+        while (ValidInput());
 
     }
 
     private static bool ValidInput()
     {
+        Console.Clear();
+        Console.WriteLine("1 - Delivery\n2 - Translation");
         var key = Console.ReadKey().KeyChar;
 
         switch (key)
@@ -41,7 +43,7 @@ internal class Program
         }
     }
 
-    private static void GetProviders<T> (OfficeManager<T> manager)
+    private static async void GetProviders<T> (OfficeManager<T> manager)
         where T : ServiceType
     {
         var order = new OrderRequest<T>();
@@ -73,11 +75,13 @@ internal class Program
                         {
                             order.Contents.Add(provider.ListOfAvailableGoods[n - 1]);
                             StampaContenutoBasket(order, currentCursorTop);
+                            break;
                         }
                     }
                     break;
                 case 'o':
-                    validInput = ConfirmOrder(manager,order,provider);
+                    await ConfirmOrder(manager,order,provider);
+                    validInput = true;
                     break;
             }
         }
@@ -122,11 +126,11 @@ internal class Program
         }
     }
 
-    private static bool ConfirmOrder<T>(OfficeManager<T> manager, OrderRequest<T> order, Provider<T> provider)
+    private static async Task<bool> ConfirmOrder<T>(OfficeManager<T> manager, OrderRequest<T> order, Provider<T> provider)
         where T : ServiceType
     {
         Console.WriteLine("confirmed");
-        manager.Office.SendOrder(order, provider);
-        return false;
+        await manager.Office.SendOrder(order, provider);
+        return true;
     }
 }

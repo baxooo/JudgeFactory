@@ -56,6 +56,6 @@ internal class FoodPortal : Portal<Food>
     public override async Task<Order<Food>> SendOrder(OrderRequest<Food> order, Provider<Food> provider)
     {
         var foodProvider = (FoodProvider)provider;
-        return await foodProvider.ProcessOrderAsync(order);
+        return await foodProvider.AddOrder(order);
     }
 }

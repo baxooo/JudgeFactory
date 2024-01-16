@@ -16,10 +16,10 @@ namespace JudgeOffice.Offices
             return portal.CheckServices();
         }
 
-        public override FoodOrderResponse SendOrder(OrderRequest<Food> order, Provider<Food> provider)
+        public async override Task<Order<Food>> SendOrder(OrderRequest<Food> order, Provider<Food> provider)
         {
             FoodPortal portal = FoodPortal.Instance;
-            return (FoodOrderResponse)portal.SendOrder(order, provider).Result;
+            return await portal.SendOrder(order, provider);
         }
     }
 }
