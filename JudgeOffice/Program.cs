@@ -42,7 +42,7 @@ internal class Program
         where T : ServiceType
     {
         Console.Clear();
-        var order = new OrderRequest<T>();
+        var order = new OrderRequest<T>(manager.Office);
         bool validInput = false;
         var provider = manager.Office.GetServices();
         Console.WriteLine("available services at " + DateTime.Now.ToString("HH:mm"));

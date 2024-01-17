@@ -11,8 +11,10 @@ internal class Porter
         where T : ServiceType
     {
         order.State = StateEnum.OnTheGo;
+        await Console.Out.WriteLineAsync($"Transporter on the way with order {order.Id}");
         await Task.Delay(TimeSpan.FromSeconds(new Random().Next(6, 12)));
+        await to.ReceivedOrder(order);
         order.State = StateEnum.Delivered;
-        to.ReceivedOrder(order);
+        
     }
 }

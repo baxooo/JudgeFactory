@@ -1,4 +1,5 @@
 ﻿using JudgeOffice.Models.FoodModels;
+using JudgeOffice.Offices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,11 @@ namespace JudgeOffice.Models.OrderModels
     internal class OrderRequest<T> : Order<T>
         where T : ServiceType
     {
-        public OrderRequest()
+        public readonly Office<T> OfficeRequester;
+        public OrderRequest(Office<T> office)
         {
             Contents = new List<T>();
+            OfficeRequester = office;
         }
     }
 }

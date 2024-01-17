@@ -35,9 +35,10 @@ namespace JudgeOffice.Offices
         public abstract Provider<T> GetServices();
         public abstract Task SendOrder(OrderRequest<T> order, Provider<T> provider);
 
-        internal Task ReceivedOrder<T>(Order<T> order) where T : ServiceType
+        internal Task ReceivedOrder(Order<T> order) 
         {
-            throw new NotImplementedException();
+            OrderReceived = order;
+            return Task.CompletedTask;
         }
     }
 }

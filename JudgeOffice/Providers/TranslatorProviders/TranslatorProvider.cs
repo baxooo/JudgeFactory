@@ -1,6 +1,8 @@
-﻿using JudgeOffice.Models.FoodModels;
+﻿using JudgeOffice.Delivery;
+using JudgeOffice.Models.FoodModels;
 using JudgeOffice.Models.OrderModels;
 using JudgeOffice.Models.TranslationModels;
+using JudgeOffice.Offices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,7 @@ internal class TranslatorProvider : Provider<Translation>
     public TimeSpan OpenTime { get; } = new TimeSpan(8, 0, 0);
     public TimeSpan CloseTime { get; } = new TimeSpan(20, 0, 0);
     public override List<Translation> ListOfAvailableGoods { get; set; }
-    public static Queue<OrderRequest<Translation>> OrdersQueue { get; set; } = new Queue<OrderRequest<Translation>>();
+    public static Queue<OrderRequest<Translation>> OrdersQueue { get; set; } = new();
     public TranslatorProvider()
     {
         ListOfAvailableGoods = new List<Translation>()
@@ -52,6 +54,8 @@ internal class TranslatorProvider : Provider<Translation>
 
         //TODO delivery guy take order in charge and change order state to OnTheGo, notify the portal of the new state
 
+        Porter porter = new Porter();
+        await porter.TransportOrder(order,order.OfficeRequester);
         await ProcessNextOrder();
 
         /*send*/ new TranslationOrderResponse()
