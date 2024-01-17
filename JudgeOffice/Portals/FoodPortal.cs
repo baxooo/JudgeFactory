@@ -1,20 +1,13 @@
-﻿using JudgeOffice.Models;
-using JudgeOffice.Models.FoodModels;
+﻿using JudgeOffice.Models.FoodModels;
 using JudgeOffice.Models.OrderModels;
 using JudgeOffice.Providers;
 using JudgeOffice.Providers.FoodProviders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JudgeOffice.Portals;
 
 internal class FoodPortal : Portal<Food>
 {
     List<FoodProvider> _foodProviders = null;
-
     private static FoodPortal _instance => null;
     private static readonly object _lock = new object();
 
@@ -54,9 +47,9 @@ internal class FoodPortal : Portal<Food>
         return fp;
     }
 
-    public override async Task<Order<Food>> SendOrder(OrderRequest<Food> order, Provider<Food> provider)
+    public override async Task SendOrder(OrderRequest<Food> order, Provider<Food> provider)
     {
         var foodProvider = (FoodProvider)provider;
-        return await foodProvider.AddOrder(order);
+        await foodProvider.AddOrder(order);
     }
 }

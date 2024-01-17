@@ -13,8 +13,6 @@ namespace JudgeOffice.Portals;
 internal class TranslatorPortal : Portal<Translation>
 {
     TranslatorProvider _tp = new TranslatorProvider();
-    private static TranslatorPortal _instance;
-    private static object _lock = new object();
     public TranslatorPortal()
     {
 
@@ -32,14 +30,11 @@ internal class TranslatorPortal : Portal<Translation>
         }
     }
 
-    public override Provider<Translation> CheckServices()
-    {
-        return _tp;
-    }
+    public override Provider<Translation> CheckServices() => _tp;
 
-    public override async Task<Order<Translation>> SendOrder(OrderRequest<Translation> order, Provider<Translation> provider)
+    public override async Task SendOrder(OrderRequest<Translation> order, Provider<Translation> provider)
     {
         var translatorProvider = (TranslatorProvider)provider;
-        return await translatorProvider.AddOrder(order);
+        await translatorProvider.AddOrder(order);
     }
 }

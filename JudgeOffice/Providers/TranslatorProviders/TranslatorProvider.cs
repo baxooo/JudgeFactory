@@ -26,16 +26,19 @@ internal class TranslatorProvider : Provider<Translation>
         };
     }
 
-    public async Task<TranslationOrderResponse> AddOrder(OrderRequest<Translation> order)
+    public async Task AddOrder(OrderRequest<Translation> order)
     {
+        order.Id = new Random().Next(0, 1000);
+        order.TotalPrice = order.Contents.Sum(x => x.Price);
+        order.State = Enums.StateEnum.Received;
         OrdersQueue.Enqueue(order);
-        return await ProcessNextOrder();
+        await ProcessNextOrder();
     }
 
-    private async Task<TranslationOrderResponse> ProcessOrderAsync(OrderRequest<Translation> order)
+    private async Task ProcessOrderAsync(OrderRequest<Translation> order)// TODO sistema delivery per tornare indietro l'ordine
     {
         var cookingTasks = new List<Task>();
-
+        order.State = Enums.StateEnum.Processing;
         for (int i = 0; i < order.Contents.Count; i++)
         {
             var translation = order.Contents[i];
@@ -47,9 +50,11 @@ internal class TranslatorProvider : Provider<Translation>
 
         Console.WriteLine("Order processed and ready for delivery.");
 
-        ProcessNextOrder();
+        //TODO delivery guy take order in charge and change order state to OnTheGo, notify the portal of the new state
 
-        return new TranslationOrderResponse()
+        await ProcessNextOrder();
+
+        /*send*/ new TranslationOrderResponse()
         {
             Id = order.Id,
             Contents = order.Contents,
@@ -64,13 +69,12 @@ internal class TranslatorProvider : Provider<Translation>
         Console.WriteLine($"Finished preparing {translation.Name} translation");
     }
 
-    private async Task<TranslationOrderResponse> ProcessNextOrder()
+    private async Task ProcessNextOrder()
     {
         if (OrdersQueue.Count > 0)
         {
             var nextOrder = OrdersQueue.Dequeue();
-            return await ProcessOrderAsync(nextOrder);
+            await ProcessOrderAsync(nextOrder);
         }
-        else return null;
     }
 }

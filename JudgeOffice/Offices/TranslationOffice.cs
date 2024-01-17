@@ -18,10 +18,8 @@ namespace JudgeOffice.Offices
             return portal.CheckServices();
         }
 
-        public override async Task<Order<Translation>> SendOrder(OrderRequest<Translation> order, Provider<Translation> provider)
-        {
-            TranslatorPortal portal = TranslatorPortal.Instance;
-            return await portal.SendOrder(order, provider);
-        }
+        public override async Task SendOrder(OrderRequest<Translation> order, Provider<Translation> provider) => 
+             await TranslatorPortal.Instance.SendOrder(order, provider);
+        
     }
 }

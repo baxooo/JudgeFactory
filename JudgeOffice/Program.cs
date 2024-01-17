@@ -4,8 +4,6 @@ using JudgeOffice.Models.OrderModels;
 using JudgeOffice.Models.TranslationModels;
 using JudgeOffice.Offices;
 using JudgeOffice.Providers;
-using System.Reflection;
-using System.Transactions;
 
 namespace JudgeOffice;
 
@@ -27,13 +25,11 @@ internal class Program
             case '1'://Delivery
                 DeliveryOffice foodOffice = new DeliveryOffice();
                 OfficeManager<Food> foodManager = new OfficeManager<Food>(foodOffice);
-                Console.Clear();
                 GetProviders(foodManager);
                 return true;
             case '2'://Translation
                 TranslationOffice translationOffice = new TranslationOffice();
                 OfficeManager<Translation> TranslationManager = new OfficeManager<Translation>(translationOffice);
-                Console.Clear();
                 GetProviders(TranslationManager);
                 return true;
             default:
@@ -45,6 +41,7 @@ internal class Program
     private static async void GetProviders<T> (OfficeManager<T> manager)
         where T : ServiceType
     {
+        Console.Clear();
         var order = new OrderRequest<T>();
         bool validInput = false;
         var provider = manager.Office.GetServices();
@@ -65,18 +62,18 @@ internal class Program
             switch (key)
             {
                 case var c when char.IsDigit(key):
+
                     int n = int.Parse(key.ToString());
                     if (n > provider.ListOfAvailableGoods.Count)
                         break;
+
                     for (int i = 1; i < provider.ListOfAvailableGoods.Count + 1; i++)
-                    {
                         if (i == n)
                         {
                             order.Contents.Add(provider.ListOfAvailableGoods[n - 1]);
                             StampaContenutoBasket(order, currentCursorTop);
                             break;
                         }
-                    }
                     break;
                 case 'o':
                     await ConfirmOrder(manager,order,provider);
@@ -88,7 +85,7 @@ internal class Program
 
     private static void StampaContenutoBasket<T>(OrderRequest<T> order, int currentCursorTop) where T : ServiceType
     {
-        Dictionary<ServiceType,int> keyValuePairs = new Dictionary<ServiceType,int>();
+        Dictionary<ServiceType,int> keyValuePairs = new();
         foreach (var item in order.Contents)
         {
             if (keyValuePairs.ContainsKey(item))
@@ -100,15 +97,19 @@ internal class Program
         RimuoviUltimeNLinee(keyValuePairs.Count, currentCursorTop);
 
         var values = keyValuePairs.OrderByDescending(x => x.Key.Price * x.Value);
+        decimal total = 0m;
         foreach (var item in values)
         {
-            Console.WriteLine((item.Key.Name + " x" + item.Value).PadRight(20) + item.Key.Price * item.Value +"$");
+            var itemTotal = item.Key.Price * item.Value;
+            Console.WriteLine((item.Key.Name + " x" + item.Value).PadRight(26- itemTotal.ToString().Length) + itemTotal + "$");
+            total += item.Key.Price * item.Value;
         }
+        Console.WriteLine("Total".PadRight(26- total.ToString().Length) + total+"$");
     }
 
     static void RimuoviUltimeNLinee(int n, int curretCursorTop)
     {
-        for (int i = 0; i < n; i++)
+        for (int i = 0; i < n +1; i++)
         {
             if(curretCursorTop != Console.CursorTop)
             {
@@ -121,6 +122,7 @@ internal class Program
                 Console.SetCursorPosition(0, Console.CursorTop);
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(0, Console.CursorTop);
+                break;
             }
         }
     }

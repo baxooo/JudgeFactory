@@ -17,12 +17,15 @@ internal abstract class FoodProvider : Provider<Food>
 
     private static Dictionary<int, TaskCompletionSource<bool>> _spotOccupancy = new Dictionary<int, TaskCompletionSource<bool>>();
 
-    public async Task<FoodOrderResponse> AddOrder(OrderRequest<Food> order)
+    public async Task AddOrder(OrderRequest<Food> order)
     {
+        order.Id = new Random().Next(0, 1000);
+        order.TotalPrice = order.Contents.Sum(x => x.Price);
+        await Console.Out.WriteLineAsync("");
         OrdersQueue.Enqueue(order);
-        return await ProcessNextOrder();
+        await ProcessNextOrder();
     }
-    private async Task<FoodOrderResponse> ProcessOrderAsync(OrderRequest<Food> order)
+    private async Task ProcessOrderAsync(OrderRequest<Food> order)// TODO sistema delivery per tornare indietro l'ordine
     {
         var cookingTasks = new List<Task>();
 
@@ -42,7 +45,7 @@ internal abstract class FoodProvider : Provider<Food>
 
         await ProcessNextOrder();
 
-        return new FoodOrderResponse()
+        /*send*/ new FoodOrderResponse()
         {
             Id = order.Id,
             Contents = order.Contents,
@@ -79,13 +82,13 @@ internal abstract class FoodProvider : Provider<Food>
         return spot;
     }
 
-    private async Task<FoodOrderResponse> ProcessNextOrder()
+    private async Task ProcessNextOrder()
     {
         if (OrdersQueue.Count > 0)
         {
             var nextOrder = OrdersQueue.Dequeue();
-            return await ProcessOrderAsync(nextOrder);
+            await ProcessOrderAsync(nextOrder);
         }
-        else return null;
+        
     }
 }

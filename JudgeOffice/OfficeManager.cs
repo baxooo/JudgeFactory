@@ -13,12 +13,14 @@ namespace JudgeOffice
         where T : ServiceType
     {
         public Office<T> Office { get; }
-        public OrderRequest<T> Order { get; set; }
         public OfficeManager(Office<T> office)
         {
             Office = office;
         }
 
-        
+        public void GetNotification(string text)
+        {
+            Console.WriteLine(text);
+        }
     }
 }
