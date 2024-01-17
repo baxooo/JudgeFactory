@@ -1,5 +1,6 @@
 ﻿using JudgeOffice.Models.OrderModels;
 using JudgeOffice.Models.TranslationModels;
+using JudgeOffice.Portals;
 using JudgeOffice.Providers;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,14 @@ namespace JudgeOffice.Offices
     {
         public override Provider<Translation> GetServices()
         {
-            throw new NotImplementedException();
+            TranslatorPortal portal = TranslatorPortal.Instance;
+            return portal.CheckServices();
         }
 
         public override async Task<Order<Translation>> SendOrder(OrderRequest<Translation> order, Provider<Translation> provider)
         {
-            throw new NotImplementedException();
+            TranslatorPortal portal = TranslatorPortal.Instance;
+            return await portal.SendOrder(order, provider);
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 namespace JudgeOffice.Models.OrderModels
 {
     internal class OrderRequest<T> : Order<T>
+        where T : ServiceType
     {
         public OrderRequest()
         {

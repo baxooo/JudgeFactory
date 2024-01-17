@@ -40,7 +40,7 @@ internal abstract class FoodProvider : Provider<Food>
 
         Console.WriteLine("Order processed and ready for delivery.");
 
-        ProcessNextOrder();
+        await ProcessNextOrder();
 
         return new FoodOrderResponse()
         {
