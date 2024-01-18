@@ -1,10 +1,6 @@
-﻿using JudgeOffice.Models.FoodModels;
+﻿using JudgeOffice.Delivery;
+using JudgeOffice.Models.FoodModels;
 using JudgeOffice.Models.OrderModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JudgeOffice.Providers.FoodProviders;
 
@@ -25,14 +21,14 @@ internal abstract class FoodProvider : Provider<Food>
         OrdersQueue.Enqueue(order);
         await ProcessNextOrder();
     }
-    private async Task ProcessOrderAsync(OrderRequest<Food> order)// TODO sistema delivery per tornare indietro l'ordine
+    private async Task ProcessOrderAsync(OrderRequest<Food> order)
     {
         var cookingTasks = new List<Task>();
 
         for (int i = 0; i < order.Contents.Count; i++)
         {
             var food = order.Contents[i];
-            var spot = GetNextAvailableSpot().Result;
+            int spot = await GetNextAvailableSpot();
 
             cookingTasks.Add(PrepareFoodAsync(food, spot));
 
@@ -43,14 +39,9 @@ internal abstract class FoodProvider : Provider<Food>
 
         Console.WriteLine("Order processed and ready for delivery.");
 
+        Porter porter = new Porter();
+        await porter.TransportOrder(order, order.OfficeRequester);
         await ProcessNextOrder();
-
-        /*send*/ new FoodOrderResponse()
-        {
-            Id = order.Id,
-            Contents = order.Contents,
-            TotalPrice = order.Contents.Sum(x => x.Price),
-        };
     }
 
     private static async Task PrepareFoodAsync(Food food, int spot)
@@ -59,6 +50,7 @@ internal abstract class FoodProvider : Provider<Food>
         await Task.Delay(TimeSpan.FromSeconds(food.TimeToPrepareInSeconds));
         Console.WriteLine($"Finished preparing {food.Name} at spot {spot}.");
         _spotOccupancy[spot].SetResult(true);
+        _spotOccupancy.Remove(spot);
     }
 
     private static async Task<int> GetNextAvailableSpot()
@@ -89,6 +81,6 @@ internal abstract class FoodProvider : Provider<Food>
             var nextOrder = OrdersQueue.Dequeue();
             await ProcessOrderAsync(nextOrder);
         }
-        
+
     }
 }

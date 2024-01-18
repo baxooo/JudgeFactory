@@ -2,11 +2,6 @@
 using JudgeOffice.Models.TranslationModels;
 using JudgeOffice.Providers;
 using JudgeOffice.Providers.TranslatorProviders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JudgeOffice.Portals;
 

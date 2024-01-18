@@ -1,10 +1,4 @@
-﻿using JudgeOffice.Models.FoodModels;
-using JudgeOffice.Offices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using JudgeOffice.Offices;
 
 namespace JudgeOffice.Models.OrderModels
 {

@@ -7,7 +7,7 @@ namespace JudgeOffice.Delivery;
 
 internal class Porter
 {
-    public async Task TransportOrder<T> (Order<T> order, Office<T> to)
+    public async Task TransportOrder<T>(Order<T> order, Office<T> to)
         where T : ServiceType
     {
         order.State = StateEnum.OnTheGo;
@@ -15,6 +15,5 @@ internal class Porter
         await Task.Delay(TimeSpan.FromSeconds(new Random().Next(6, 12)));
         await to.ReceivedOrder(order);
         order.State = StateEnum.Delivered;
-        
     }
 }

@@ -11,7 +11,7 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        while (ValidInput());
+        while (ValidInput()) ;
     }
 
     private static bool ValidInput()
@@ -38,7 +38,7 @@ internal class Program
         }
     }
 
-    private static async void GetProviders<T> (OfficeManager<T> manager)
+    private static async void GetProviders<T>(OfficeManager<T> manager)
         where T : ServiceType
     {
         Console.Clear();
@@ -48,7 +48,7 @@ internal class Program
         Console.WriteLine("available services at " + DateTime.Now.ToString("HH:mm"));
         for (int i = 0; i < provider.ListOfAvailableGoods.Count; i++)
         {
-            Console.WriteLine((i + 1) + " " 
+            Console.WriteLine((i + 1) + " "
                 + provider.ListOfAvailableGoods[i].Name.PadRight(20) +
                  provider.ListOfAvailableGoods[i].Price + "$"
                 );
@@ -76,7 +76,7 @@ internal class Program
                         }
                     break;
                 case 'o':
-                    await ConfirmOrder(manager,order,provider);
+                    await ConfirmOrder(manager, order, provider);
                     validInput = true;
                     break;
             }
@@ -85,7 +85,7 @@ internal class Program
 
     private static void StampaContenutoBasket<T>(OrderRequest<T> order, int currentCursorTop) where T : ServiceType
     {
-        Dictionary<ServiceType,int> keyValuePairs = new();
+        Dictionary<ServiceType, int> keyValuePairs = new();
         foreach (var item in order.Contents)
         {
             if (keyValuePairs.ContainsKey(item))
@@ -101,17 +101,17 @@ internal class Program
         foreach (var item in values)
         {
             var itemTotal = item.Key.Price * item.Value;
-            Console.WriteLine((item.Key.Name + " x" + item.Value).PadRight(26- itemTotal.ToString().Length) + itemTotal + "$");
+            Console.WriteLine((item.Key.Name + " x" + item.Value).PadRight(26 - itemTotal.ToString().Length) + itemTotal + "$");
             total += item.Key.Price * item.Value;
         }
-        Console.WriteLine("Total".PadRight(26- total.ToString().Length) + total+"$");
+        Console.WriteLine("Total".PadRight(26 - total.ToString().Length) + total + "$");
     }
 
     static void RimuoviUltimeNLinee(int n, int curretCursorTop)
     {
-        for (int i = 0; i < n +1; i++)
+        for (int i = 0; i < n + 1; i++)
         {
-            if(curretCursorTop != Console.CursorTop)
+            if (curretCursorTop != Console.CursorTop)
             {
                 Console.SetCursorPosition(0, Console.CursorTop);
                 Console.Write(new string(' ', Console.WindowWidth));

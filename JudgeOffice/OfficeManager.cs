@@ -2,11 +2,6 @@
 using JudgeOffice.Models;
 using JudgeOffice.Models.OrderModels;
 using JudgeOffice.Offices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JudgeOffice
 {
@@ -21,7 +16,7 @@ namespace JudgeOffice
             office.OnOrderReceived += GetNotification;
         }
 
-        public void GetNotification(object sender, NotificationEventArgs<T> e )
+        public void GetNotification(object sender, NotificationEventArgs<T> e)
         {
             Console.WriteLine("Order has Arrived");
             Orders.Add(e.OrderReceived);

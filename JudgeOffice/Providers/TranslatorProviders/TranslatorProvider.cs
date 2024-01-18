@@ -1,13 +1,6 @@
 ﻿using JudgeOffice.Delivery;
-using JudgeOffice.Models.FoodModels;
 using JudgeOffice.Models.OrderModels;
 using JudgeOffice.Models.TranslationModels;
-using JudgeOffice.Offices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JudgeOffice.Providers.TranslatorProviders;
 
@@ -37,7 +30,7 @@ internal class TranslatorProvider : Provider<Translation>
         await ProcessNextOrder();
     }
 
-    private async Task ProcessOrderAsync(OrderRequest<Translation> order)// TODO sistema delivery per tornare indietro l'ordine
+    private async Task ProcessOrderAsync(OrderRequest<Translation> order)
     {
         var cookingTasks = new List<Task>();
         order.State = Enums.StateEnum.Processing;
@@ -52,18 +45,9 @@ internal class TranslatorProvider : Provider<Translation>
 
         Console.WriteLine("Order processed and ready for delivery.");
 
-        //TODO delivery guy take order in charge and change order state to OnTheGo, notify the portal of the new state
-
         Porter porter = new Porter();
-        await porter.TransportOrder(order,order.OfficeRequester);
+        await porter.TransportOrder(order, order.OfficeRequester);
         await ProcessNextOrder();
-
-        /*send*/ new TranslationOrderResponse()
-        {
-            Id = order.Id,
-            Contents = order.Contents,
-            TotalPrice = order.Contents.Sum(x => x.Price),
-        };
     }
 
     private static async Task PrepareTranslationAsync(Translation translation)
