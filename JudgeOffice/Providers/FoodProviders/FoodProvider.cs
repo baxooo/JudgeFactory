@@ -12,19 +12,33 @@ internal abstract class FoodProvider : Provider<Food>
     public static Queue<OrderRequest<Food>> OrdersQueue { get; set; } = new Queue<OrderRequest<Food>>();
 
     private static Dictionary<int, TaskCompletionSource<bool>> _spotOccupancy = new Dictionary<int, TaskCompletionSource<bool>>();
+    static bool IsProcessing = false;
 
     public async Task AddOrder(OrderRequest<Food> order)
     {
         order.Id = new Random().Next(0, 1000);
         order.TotalPrice = order.Contents.Sum(x => x.Price);
-        await Console.Out.WriteLineAsync("");
         OrdersQueue.Enqueue(order);
-        await ProcessNextOrder();
-    }
-    private async Task ProcessOrderAsync(OrderRequest<Food> order)
-    {
-        var cookingTasks = new List<Task>();
 
+        await ProcessOrdersSequentially();
+    }
+    private async Task ProcessOrdersSequentially()
+    {
+        while (OrdersQueue.Count > 0)
+        {
+            if (!IsProcessing)
+            {
+                IsProcessing = true;
+                await ProcessOrderAsync();
+            }
+            else await Task.Delay(100);
+        }
+    }
+    private async Task ProcessOrderAsync()
+    {
+        var order = OrdersQueue.Peek();
+        var cookingTasks = new List<Task>();
+        await Console.Out.WriteLineAsync($"processing order {order.Id}");
         for (int i = 0; i < order.Contents.Count; i++)
         {
             var food = order.Contents[i];
@@ -36,13 +50,13 @@ internal abstract class FoodProvider : Provider<Food>
         }
 
         await Task.WhenAll(cookingTasks);
-
+        IsProcessing = false;
+        OrdersQueue.Dequeue();
         Console.WriteLine("Order processed and ready for delivery.");
         SetOrderCompleted(order);
 
         Porter porter = new Porter();
         await porter.TransportOrder(order, order.OfficeRequester);
-        await ProcessNextOrder();
     }
 
     private static async Task PrepareFoodAsync(Food food, int spot)
@@ -51,7 +65,6 @@ internal abstract class FoodProvider : Provider<Food>
         await Task.Delay(TimeSpan.FromSeconds(food.TimeToPrepareInSeconds));
         Console.WriteLine($"Finished preparing {food.Name} at spot {spot}.");
         _spotOccupancy[spot].SetResult(true);
-        _spotOccupancy.Remove(spot);
     }
 
     private static async Task<int> GetNextAvailableSpot()
@@ -73,14 +86,5 @@ internal abstract class FoodProvider : Provider<Food>
         }
 
         return spot;
-    }
-
-    private async Task ProcessNextOrder()
-    {
-        if (OrdersQueue.Count > 0)
-        {
-            var nextOrder = OrdersQueue.Dequeue();
-            await ProcessOrderAsync(nextOrder);
-        }
     }
 }
