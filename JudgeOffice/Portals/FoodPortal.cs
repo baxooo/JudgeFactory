@@ -7,7 +7,7 @@ namespace JudgeOffice.Portals;
 
 internal class FoodPortal : Portal<Food>
 {
-    List<FoodProvider> _foodProviders = null;
+    readonly List<FoodProvider> _foodProviders = null;
     private static FoodPortal _instance => null;
     private static readonly object _lock = new object();
 
@@ -42,9 +42,7 @@ internal class FoodPortal : Portal<Food>
         TimeSpan now = DateTime.Now.TimeOfDay;
         // TODO add a real selection based on the provider with less orders
         FoodProvider? fp = _foodProviders.FirstOrDefault(fp => fp.OpenTime <= now && fp.CloseTime >= now);
-        if (fp == null)
-            throw new Exception("No food provider available");
-        return fp;
+        return fp ?? throw new Exception("No food provider available");
     }
 
     public override async Task SendOrder(OrderRequest<Food> order, Provider<Food> provider)

@@ -21,5 +21,10 @@ namespace JudgeOffice
             Console.WriteLine("Order has Arrived");
             Orders.Add(e.OrderReceived);
         }
+
+        public void GetNotificationOrderOnTheWay(object sender, NotificationEventArgs<T> e)
+        {
+            Console.WriteLine($"Order {e.OrderReceived.Id} is on the way");
+        }
     }
 }

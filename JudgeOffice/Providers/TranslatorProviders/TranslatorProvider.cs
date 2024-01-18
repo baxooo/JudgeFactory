@@ -44,6 +44,7 @@ internal class TranslatorProvider : Provider<Translation>
         await Task.WhenAll(cookingTasks);
 
         Console.WriteLine("Order processed and ready for delivery.");
+        SetOrderCompleted(order);
 
         Porter porter = new Porter();
         await porter.TransportOrder(order, order.OfficeRequester);

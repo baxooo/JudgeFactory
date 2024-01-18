@@ -38,6 +38,7 @@ internal abstract class FoodProvider : Provider<Food>
         await Task.WhenAll(cookingTasks);
 
         Console.WriteLine("Order processed and ready for delivery.");
+        SetOrderCompleted(order);
 
         Porter porter = new Porter();
         await porter.TransportOrder(order, order.OfficeRequester);
@@ -81,6 +82,5 @@ internal abstract class FoodProvider : Provider<Food>
             var nextOrder = OrdersQueue.Dequeue();
             await ProcessOrderAsync(nextOrder);
         }
-
     }
 }

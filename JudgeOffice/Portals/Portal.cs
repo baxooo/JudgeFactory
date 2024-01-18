@@ -11,5 +11,7 @@ namespace JudgeOffice.Portals
         protected static object _lock = new object();
         public abstract Provider<T> CheckServices();
         public abstract Task SendOrder(OrderRequest<T> order, Provider<T> provider);
+        
+
     }
 }

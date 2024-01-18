@@ -44,7 +44,10 @@ internal class Program
         Console.Clear();
         var order = new OrderRequest<T>(manager.Office);
         bool validInput = false;
+
         var provider = manager.Office.GetServices();
+        provider.OnOrderCompleted += manager.GetNotificationOrderOnTheWay;
+
         Console.WriteLine("available services at " + DateTime.Now.ToString("HH:mm"));
         for (int i = 0; i < provider.ListOfAvailableGoods.Count; i++)
         {
@@ -61,7 +64,7 @@ internal class Program
             var key = Console.ReadKey().KeyChar;
             switch (key)
             {
-                case var c when char.IsDigit(key):
+                case var _ when char.IsDigit(key):
 
                     int n = int.Parse(key.ToString());
                     if (n > provider.ListOfAvailableGoods.Count)
