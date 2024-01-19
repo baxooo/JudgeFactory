@@ -34,6 +34,9 @@ internal class TranslatorProvider : Provider<Translation>
     {
         var cookingTasks = new List<Task>();
         order.State = Enums.StateEnum.Processing;
+        Console.BackgroundColor = ConsoleColor.Blue;
+        await Console.Out.WriteLineAsync($"translating order {order.Id}");
+        Console.ResetColor();
         for (int i = 0; i < order.Contents.Count; i++)
         {
             var translation = order.Contents[i];
@@ -43,7 +46,9 @@ internal class TranslatorProvider : Provider<Translation>
 
         await Task.WhenAll(cookingTasks);
 
+        Console.BackgroundColor = ConsoleColor.Green;
         Console.WriteLine("Order processed and ready for delivery.");
+        Console.ResetColor();
         SetOrderCompleted(order);
 
         Porter porter = new Porter();

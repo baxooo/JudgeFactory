@@ -23,13 +23,11 @@ internal class Program
         switch (key)
         {
             case '1'://Delivery
-                DeliveryOffice foodOffice = new DeliveryOffice();
-                OfficeManager<Food> foodManager = new OfficeManager<Food>(foodOffice);
+                OfficeManager<Food> foodManager = new OfficeManager<Food>();
                 GetProviders(foodManager);
                 return true;
             case '2'://Translation
-                TranslationOffice translationOffice = new TranslationOffice();
-                OfficeManager<Translation> TranslationManager = new OfficeManager<Translation>(translationOffice);
+                OfficeManager<Translation> TranslationManager = new OfficeManager<Translation>();
                 GetProviders(TranslationManager);
                 return true;
             default:
@@ -39,11 +37,12 @@ internal class Program
     }
 
     private static async void GetProviders<T>(OfficeManager<T> manager)
-        where T : ServiceType
+        where T : ServiceType,new()
     {
         Console.Clear();
         var order = new OrderRequest<T>(manager.Office);
         bool validInput = false;
+        manager.Office.OnOrderReceived += manager.GetNotification;
 
         var provider = manager.Office.GetServices();
         provider.OnOrderCompleted += manager.GetNotificationOrderOnTheWay;
@@ -131,7 +130,7 @@ internal class Program
     }
 
     private static async Task<bool> ConfirmOrder<T>(OfficeManager<T> manager, OrderRequest<T> order, Provider<T> provider)
-        where T : ServiceType
+        where T : ServiceType, new()
     {
         Console.SetCursorPosition(0, Console.CursorTop);
         Console.WriteLine("confirmed");

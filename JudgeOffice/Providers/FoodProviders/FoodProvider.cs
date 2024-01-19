@@ -38,7 +38,9 @@ internal abstract class FoodProvider : Provider<Food>
     {
         var order = OrdersQueue.Peek();
         var cookingTasks = new List<Task>();
+        Console.BackgroundColor = ConsoleColor.Blue;
         await Console.Out.WriteLineAsync($"processing order {order.Id}");
+        Console.ResetColor();
         for (int i = 0; i < order.Contents.Count; i++)
         {
             var food = order.Contents[i];
@@ -50,9 +52,10 @@ internal abstract class FoodProvider : Provider<Food>
         }
 
         await Task.WhenAll(cookingTasks);
-        IsProcessing = false;
         OrdersQueue.Dequeue();
+        Console.BackgroundColor = ConsoleColor.Green;
         Console.WriteLine("Order processed and ready for delivery.");
+        Console.ResetColor();
         SetOrderCompleted(order);
 
         Porter porter = new Porter();
