@@ -14,7 +14,7 @@ namespace JudgeOffice
         public Office<T> Office { get; set; }
         public OfficeManager()
         {
-            T entity = new T();
+            T entity = new();
             Office = entity is Food ? new DeliveryOffice() as Office<T> : new TranslationOffice() as Office<T>;
         }
 

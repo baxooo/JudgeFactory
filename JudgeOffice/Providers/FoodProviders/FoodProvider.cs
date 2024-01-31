@@ -9,10 +9,13 @@ internal abstract class FoodProvider : Provider<Food>
     public override List<Food> ListOfAvailableGoods { get; set; }
     public abstract TimeSpan OpenTime { get; }
     public abstract TimeSpan CloseTime { get; }
-    public static Queue<OrderRequest<Food>> OrdersQueue { get; set; } = new Queue<OrderRequest<Food>>();
+    private static Queue<Food> _foodInLine { get; set; } = new();
+    public static Queue<OrderRequest<Food>> OrdersQueue { get; set; } = new();
 
-    private static Dictionary<int, TaskCompletionSource<bool>> _spotOccupancy = new Dictionary<int, TaskCompletionSource<bool>>();
-    static bool IsProcessing = false;
+    private static Dictionary<int, TaskCompletionSource<bool>> _spotOccupancy = new();
+    private static object _lock = new();
+    static bool _isProcessing = false;
+    static bool _startedNew = false;
 
     public async Task AddOrder(OrderRequest<Food> order)
     {
@@ -20,15 +23,16 @@ internal abstract class FoodProvider : Provider<Food>
         order.TotalPrice = order.Contents.Sum(x => x.Price);
         OrdersQueue.Enqueue(order);
 
-        await ProcessOrdersSequentially();
+        await ProcessOrdersSequentially(order.Contents);
     }
-    private async Task ProcessOrdersSequentially()
+    private async Task ProcessOrdersSequentially(List<Food> foods)
     {
         while (OrdersQueue.Count > 0)
         {
-            if (!IsProcessing)
+            if (!_isProcessing)
             {
-                IsProcessing = true;
+                foods.ForEach(x => _foodInLine.Enqueue(x));  
+                _isProcessing = true;
                 await ProcessOrderAsync();
             }
             else await Task.Delay(100);
@@ -36,7 +40,7 @@ internal abstract class FoodProvider : Provider<Food>
     }
     private async Task ProcessOrderAsync()
     {
-        var order = OrdersQueue.Peek();
+        var order = OrdersQueue.Dequeue();
         var cookingTasks = new List<Task>();
         Console.BackgroundColor = ConsoleColor.Blue;
         await Console.Out.WriteLineAsync($"processing order {order.Id}");
@@ -52,7 +56,7 @@ internal abstract class FoodProvider : Provider<Food>
         }
 
         await Task.WhenAll(cookingTasks);
-        OrdersQueue.Dequeue();
+        _startedNew = false;
         Console.BackgroundColor = ConsoleColor.Green;
         Console.WriteLine("Order processed and ready for delivery.");
         Console.ResetColor();
@@ -68,6 +72,17 @@ internal abstract class FoodProvider : Provider<Food>
         await Task.Delay(TimeSpan.FromSeconds(food.TimeToPrepareInSeconds));
         Console.WriteLine($"Finished preparing {food.Name} at spot {spot}.");
         _spotOccupancy[spot].SetResult(true);
+        _foodInLine.Dequeue();
+
+        if (_foodInLine.Count <= 3 && !_startedNew)
+        {
+            lock (_lock)
+                if (_foodInLine.Count <= 3 && !_startedNew)
+                {
+                    _isProcessing = false;
+                    _startedNew = true;
+                }
+        }
     }
 
     private static async Task<int> GetNextAvailableSpot()
